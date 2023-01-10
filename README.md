@@ -25,6 +25,8 @@ Vamos a crear un primer proyecto en REACT que nos permita poner en práctica los
 ```bash
 touch .gitignore
 yarn init -y
+yarn add eslint
+yarn eslint --init
 yarn add react react-dom typescript axios parcel
 tsc --init
 yarn add @types/react @types/react-dom @types/node
@@ -42,6 +44,34 @@ yarn add @types/react @types/react-dom @types/node
 		// (...)
 	}
 	// (...)
+}
+```
+
+> .eslintrc.json
+
+```json
+{
+	"env": {
+		"browser": true,
+		"es2021": true
+	},
+	"extends": ["plugin:react/recommended", "airbnb"],
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaFeatures": {
+			"jsx": true
+		},
+		"ecmaVersion": "latest",
+		"sourceType": "module"
+	},
+	"plugins": ["react", "@typescript-eslint"],
+	"rules": {
+		"react/function-component-definition": "off",
+		"react/jsx-filename-extension": "off",
+		"camelcase": "off",
+		"import/no-unresolved": "off",
+		"import/extensions": "off"
+	}
 }
 ```
 
@@ -73,9 +103,9 @@ touch App.tsx index.tsx
 > index.tsx
 
 ```tsx
-import React, { StrictMode } from 'react';
-import { App } from './App';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
+import App from './App';
 
 console.log('Starting react app...');
 
@@ -92,7 +122,9 @@ root.render(<App />);
 import React from 'react';
 
 // Nota: Esto es un componente "funcional". Se le llama funcional porque se usa una función en lugar de una clase
-export const App = () => <p>Hola desde REACT</p>;
+const App = () => <p>Hola desde REACT</p>;
+
+export default App;
 ```
 
 ## Librería react-dom
@@ -113,7 +145,7 @@ Para este proyecto comenzamos a trabajar `Parcel`: una herramienta que lee los a
 
 Dentro de la carpeta dist que nos genera parcel podemos encontrar nuestros archivos JS compilados y ver como se han transpilado los distintos elementos de nuestra aplicación.
 
-Por ejemplo, el siguinete código no es código válido de JS a menos que lo compilemos previamente (con `parcel` u otro compilador):
+Por ejemplo, el siguiente código no es código válido de JS a menos que lo compilemos previamente (con `parcel` u otro compilador):
 
 ```TS
 const App = () => <p>Hola</p>;
@@ -143,9 +175,9 @@ Editamos nuestro primer componente:
 ```tsx
 import React from 'react';
 
-export const Card = () => {
-	return <p>Card</p>;
-};
+const Card = () => <p>Card</p>;
+
+export default Card;
 ```
 
 Y lo incorporamos a la aplicación:
@@ -153,18 +185,18 @@ Y lo incorporamos a la aplicación:
 > App.tsx
 
 ```tsx
-import React from 'react';
-import { Card } from './components/Card';
+// (...)
+import Card from './components/Card';
 
-export const App = () => {
-	return (
-		<div className="cardlist">
-			<Card />
-			<Card />
-			<Card />
-		</div>
-	);
-};
+const App = () => (
+	<div className="cardlist">
+		<Card />
+		<Card />
+		<Card />
+	</div>
+);
+
+// (...)
 ```
 
 <p align="center">
@@ -184,19 +216,20 @@ Vamosa detallar nuestro componente card:
 > Card.tsx
 
 ```tsx
-import React from 'react';
+// (...)
 
-export const Card = () => {
-	return (
-		<div>
-			<img
-				src="https://preview.redd.it/0q9k35rs52461.jpg?width=1920&format=pjpg&auto=webp&s=28a96947814b6207c596c34b4e623bc6c9683692"
-				width="300"
-			></img>
-			<p>Developer Excuses</p>
-		</div>
-	);
-};
+const Card = () => (
+	<div>
+		<img
+			alt="demo"
+			src="https://preview.redd.it/0q9k35rs52461.jpg?width=1920&format=pjpg&auto=webp&s=28a96947814b6207c596c34b4e623bc6c9683692"
+			width="300"
+		/>
+		<p>Developer Excuses</p>
+	</div>
+);
+
+// (...)
 ```
 
 ## Styles
@@ -206,7 +239,7 @@ A la hora de añadir estilos tenemos que enfrentarnos al siguiente reto: el `CSS
 > Card.tsx
 
 ```tsx
-import React from 'react';
+// (...)
 
 const styleObject = {
 	border: '1px solid red',
@@ -219,17 +252,19 @@ const styleObject = {
 	textAlign: 'center' as 'center',
 };
 
-export const Card = () => {
-	let imageUrl =
+const Card = () => {
+	const image =
 		'https://preview.redd.it/0q9k35rs52461.jpg?width=1920&format=pjpg&auto=webp&s=28a96947814b6207c596c34b4e623bc6c9683692';
-	let cardTitle = 'Developer Excuses';
+	const title = 'Developer Excuses';
 	return (
 		<div style={styleObject}>
-			<img src={imageUrl} width="300"></img>
-			<p>{cardTitle}</p>
+			<img alt="demo" src={image} width="300" />
+			<p>{title}</p>
 		</div>
 	);
 };
+
+// (...)
 ```
 
 > ATENCIÓN: Convención de REACT llama al CSS como OBJ (común para REACT, ANGULAR, REACT NATIVE...). En JS las propiedades no pueden tener guiones en su nombre por lo que no podemos declarar `margin-top:10` sino emplear `marginTop: 10`.
@@ -244,7 +279,11 @@ touch excuses.tsx
 > excuses.ts
 
 ```tsx
-export const list = {
+interface iExcuses {
+	[index: string]: { title: string; image: string };
+}
+
+const list: iExcuses = {
 	one: {
 		title: 'I haven’t touched that module in weeks!',
 		image:
@@ -261,13 +300,15 @@ export const list = {
 			'https://preview.redd.it/0q9k35rs52461.jpg?width=1920&format=pjpg&auto=webp&s=28a96947814b6207c596c34b4e623bc6c9683692',
 	},
 };
+
+export default list;
 ```
 
 > Card.tsx
 
 ```tsx
 import React from 'react';
-import { list } from '../../data/excuses';
+import list from '../../data/excuses';
 
 const styleObject = {
 	// (...)
@@ -284,7 +325,7 @@ export const Card = () => {
 };
 ```
 
-## PROPS
+## PROPS
 
 <!-- TODO: Ampliar definición de PROPS -->
 
@@ -295,16 +336,22 @@ Al igual que las etiquetas tienen atributos, los componentes en `REACT tienen PR
 ```tsx
 // (...)
 
-export const Card = (props: any) => {
+const styleObject = {
+	// (...)
+};
+
+const Card = (props: any) => {
 	console.log('Excuse props', props);
-	const { title, image } = list['one'];
+	const { title, image } = list.one;
 	return (
 		<div style={styleObject}>
-			<img src={image} width="300"></img>
+			<img alt="demo" src={image} width="300" />
 			<p>{title}</p>
 		</div>
 	);
 };
+
+// (...)
 ```
 
 Al hacer `console.log('Excuse props', props);` se muestran por consola 3 console props (por cada componente se ejecuta la función una vez). El mismo componente se está reutilizando y pintando 3 veces. Esta es una de las ventajas de REACT: la reutilización de componentes.
@@ -317,15 +364,16 @@ Lo que cada componente tiene como atributo en `App.tsx` se convierte en un objet
 
 ```js
 // (...)
-export const App = () => {
-	return (
-		<div className="cardlist">
-			<Card ex="one" />
-			<Card ex="two" />
-			<Card ex="three" />
-		</div>
-	);
-};
+
+const App = () => (
+	<div className="cardlist">
+		<Card ex="one" />
+		<Card ex="two" />
+		<Card ex="three" />
+	</div>
+);
+
+// (...)
 ```
 
 En REACT se suele escribir de la siguiente manera, sacando solo las props que nos interesan:
@@ -334,15 +382,20 @@ En REACT se suele escribir de la siguiente manera, sacando solo las props que no
 
 ```js
 // (...)
-export const Card = (props: { ex: string }) => {
-	const { title, image } = list[props.ex];
+
+const Card = (props: { ex: string }) => {
+	console.log('Excuse props', props);
+	const { ex } = props;
+	const { title, image } = list[ex];
 	return (
 		<div style={styleObject}>
-			<img src={image} width="300"></img>
+			<img alt="demo" src={image} width="300" />
 			<p>{title}</p>
 		</div>
 	);
 };
+
+// (...)
 ```
 
 ## Explorando las props
@@ -366,6 +419,8 @@ export const App = () => {
 > Card.tsx
 
 ```tsx
+// (...)
+
 const styleObject = (color: string) => ({
 	border: `1px solid ${color}`,
 	padding: 10,
@@ -376,15 +431,19 @@ const styleObject = (color: string) => ({
 	textAlign: 'center' as 'center',
 });
 
-export const Card = ({ ex, color }: { ex: string; color: string }) => {
+const Card = (props: { ex: string; color: string }) => {
+	console.log('Excuse props', props);
+	const { ex, color } = props;
 	const { title, image } = list[ex];
 	return (
 		<div style={styleObject(color)}>
-			<img src={image} width="300"></img>
+			<img alt="demo" src={image} width="300" />
 			<p>{title}</p>
 		</div>
 	);
 };
+
+// (...)
 ```
 
 Es decir, los propios estilos visuales se pueden parametrizar y escribir con poco código muchas cosas.
@@ -397,23 +456,26 @@ Para REACT cada elemento es único, lo que le permite eliminar SÓLO el componen
 
 REACT está programado de tal manera que identifica mediante una key (un id, el iterador de map, etc) cada elemento de la lista y borra solo el indicado, haciendo que el performance en REACT sea muy rápido.
 
-> app.tsx
+> App.tsx
 
 ```tsx
 import React from 'react';
-import { list } from '../data/excuses';
-import { Card } from './components/Card';
+import list from '../data/excuses';
+import Card from './components/Card';
 
-export const App = () => {
+const App = () => {
 	const excusesKeys = Object.keys(list);
 	return (
 		<div className="cardlist">
 			{excusesKeys.map((ex, i) => (
-				<Card key={i} ex={list[ex]} />
+				// eslint-disable-next-line react/no-array-index-key
+				<Card key={i} ex={list[ex]} color="red" />
 			))}
 		</div>
 	);
 };
+
+export default App;
 ```
 
 > Card.tsx
@@ -431,20 +493,22 @@ const styleObject = (color: string) => ({
 	textAlign: 'center' as 'center',
 });
 
-export const Card = (props: {
+const Card = (props: {
 	ex: { title: string; image: string };
-	color?: string;
+	color: string;
 }) => {
 	const { ex, color = 'red' } = props;
 	console.log(ex);
 	const { title, image } = ex;
 	return (
 		<div style={styleObject(color)}>
-			<img src={image} width="300"></img>
+			<img alt="demo" src={image} width="300" />
 			<p>{title}</p>
 		</div>
 	);
 };
+
+export default Card;
 ```
 
 ## Hooks
@@ -456,23 +520,27 @@ Vamos a añadir un btn en cada card que ejecute una función `excuseHandler`:
 ```tsx
 // (...)
 
-export const Card = (props: {
+const Card = (props: {
 	ex: { title: string; image: string };
-	color?: string;
+	color: string;
 }) => {
 	const { ex, color = 'red' } = props;
 	const { title, image } = ex;
 	const excuseHandler = () => {
-		console.log(`click on excuse ${title}`);
+		console.log(`Click on excuse: ${title}`);
 	};
 	return (
 		<div style={styleObject(color)}>
-			<img src={image} width="300"></img>
+			<img alt="demo" src={image} width="300" />
 			<p>{title}</p>
-			<button onClick={excuseHandler}>Select</button>
+			<button type="button" onClick={excuseHandler}>
+				Select
+			</button>
 		</div>
 	);
 };
+
+// (...)
 ```
 
 Vamos a hacer que el color cambie con el hook useState(). Un hook es una función que nos permite alterar el comportamiento de un componente.
@@ -495,34 +563,43 @@ Nuestro nuevo hook useState inicia su valor a false. Cuando ejecutamos la funci�
 > Card.tsx
 
 ```tsx
-// (...)
+import React, { useState } from 'react';
 
-export const Card = (props: {
-	ex: { title: string; image: string };
-	color?: string;
-}) => {
-	const { ex, color = 'red' } = props;
+const styleObject = (isActive: boolean) => ({
+	border: `1px solid ${isActive ? 'green' : 'red'}`,
+	padding: 10,
+	marginTop: 10,
+	marginLeft: '5px',
+	marginRight: 5,
+	display: 'inline-block',
+	textAlign: 'center' as 'center',
+});
+
+const Card = (props: { ex: { title: string; image: string } }) => {
+	const { ex } = props;
 	const { title, image } = ex;
 
 	const [isActive, setIsActive] = useState(false);
-	const [myColor, setMyColor] = useState('red');
 
 	const excuseHandler = () => {
-		console.log(`click on excuse ${title}`);
-		setMyColor('green');
+		console.log(`Click on excuse: ${title}`);
 		setIsActive(!isActive);
 	};
 	return (
-		<div style={styleObject(myColor)}>
-			<img src={image} width="300"></img>
+		<div style={styleObject(isActive)}>
+			<img alt="demo" src={image} width="300" />
 			<p>{title}</p>
-			<button onClick={excuseHandler}>Select</button>
+			<button type="button" onClick={excuseHandler}>
+				Select
+			</button>
 			<p>status: {isActive ? 'true' : 'false'}</p>
 			{isActive && <p>Excuse already used</p>}
 			{!isActive && <p>excuse available</p>}
 		</div>
 	);
 };
+
+export default Card;
 ```
 
 ## UseEffect
@@ -536,8 +613,8 @@ Vamos a instalar axios y crear una función que consuma información de una API 
 ```ts
 import axios from 'axios';
 
-export const getExcuse = async () => {
-	const res = await axios.get(`http://localhost:3001/excuses/random`);
+const getExcuse = async () => {
+	const res = await axios.get('http://localhost:3001/excuses/random');
 	const { title } = res.data;
 	const wrapdata = {
 		title,
@@ -545,41 +622,47 @@ export const getExcuse = async () => {
 	console.log(wrapdata);
 	return wrapdata;
 };
+
+export default getExcuse;
 ```
 
 > ExcusefromApi.tsx
 
 ```tsx
 import React from 'react';
-import { getExcuse } from '../../lib/getExcuse';
+import getExcuse from '../lib/getExcuse';
 
-export const ExcusefromApi = () => {
+const ExcusefromApi = () => {
 	const ex = getExcuse();
 	console.log(ex);
 	return <p>ExcuseApi</p>;
 };
+
+export default ExcusefromApi;
 ```
 
 > App.tsx
 
 ```tsx
 import React from 'react';
-import { Card } from './components/Card';
-import { ExcusefromApi } from './components/ExcusefromApi';
-import { excusesList } from '../data/excuses';
+import list from '../data/excuses';
+import ExcusefromApi from './components/ExcusefromApi';
+import Card from './components/Card';
 
-export const App = () => {
-	const excusesKeys = Object.keys(excusesList);
-	console.log(excusesKeys);
+const App = () => {
+	const excusesKeys = Object.keys(list);
 	return (
 		<div className="cardlist">
 			<ExcusefromApi />
 			{excusesKeys.map((ex, i) => (
-				<Card key={i} excuse={excusesList[ex]} />
+				// eslint-disable-next-line react/no-array-index-key
+				<Card key={i} ex={list[ex]} />
 			))}
 		</div>
 	);
 };
+
+export default App;
 ```
 
 Obtenemos nueva información gracias a ExcusefromApi. No obstante, si quisiérmaos trabajar la información de la siguiente manera nos encontramos con que por consola obtenemos una promesa.
@@ -591,40 +674,32 @@ Al ser JS asíncrono, necesitamos esperar de alguna manera a que la promesa se r
 ```tsx
 // (...)
 
-export const ExcusefromApi = async () => {
+const ExcusefromApi = async () => {
 	const ex = await getExcuse();
 	console.log(ex);
 	return <p>ExcuseApi</p>;
-};
-// Uncaught Error: Objects are not valid as a React child
+}; // --> Uncaught Error: Objects are not valid as a React child
 ```
 
 Estamos viendo como esta función devuelve una promesa y de que manera REACT no puede renderizar componentes que dependan de esta asincronía. Dicho de otra manera, cuando REACT va a pintar un componente necesita decidir que HTML va a insertar en el momento: no puede esperar a la futura resolución.Es en este punto cuando recurrimos a useEffect.
 
 `HOOK useEfect`: controla cuándo ejecutar el efecto colateral de algo gracias a sus dependencias.
 
-> app.tsx
+> App.tsx
 
 ```tsx
 import React from 'react';
+import ExcusefromApi from './components/ExcusefromApi';
 
-import { ExcusefromApi } from './components/ExcuseFromApi';
-import { excusesList } from '../data/excuses';
+const App = () => (
+	<div className="cardlist">
+		<ExcusefromApi />
+		<ExcusefromApi />
+		<ExcusefromApi />
+	</div>
+);
 
-export const App = () => {
-	const excusesKeys = Object.keys(excusesList);
-	console.log(excusesKeys);
-	return (
-		<div className="cardlist">
-			<ExcusefromApi />
-			<ExcusefromApi />
-			<ExcusefromApi />
-			{/* {
-				excusesKeys.map((ex, i) => <Card key={i} excuse={excusesList[ex]} />)
-			} */}
-		</div>
-	);
-};
+export default App;
 ```
 
 > getExcuse.tsx
@@ -632,19 +707,21 @@ export const App = () => {
 ```tsx
 import axios from 'axios';
 
-export const getExcuse = async () => {
-	const res = await axios.get(`http://localhost:3001/excuses/random`);
+const getExcuse = async () => {
+	const res = await axios.get('http://localhost:3001/excuses/random');
 	const { title } = res.data;
 	return title;
 };
+
+export default getExcuse;
 ```
 
 > ExcusefromApi.tsx
 
 ```tsx
 import React, { useState, useEffect } from 'react';
-import { getExcuse } from '../lib/getExcuse';
-import { Card } from '../components/Card';
+import getExcuse from '../lib/getExcuse';
+import Card from '../components/Card';
 
 // Cuando se monte el componente en el DOM por primera vez llama a esta función.
 // [] -> dependencias: indian cuando ejecutar un efecto
@@ -652,9 +729,8 @@ import { Card } from '../components/Card';
 // este efecto se ejecuta solo cuando el componente
 // se monta por primera vez en el DOM
 
-export const ExcusefromApi = () => {
+const ExcusefromApi = () => {
 	const [excuse, setExcuse] = useState();
-
 	useEffect(() => {
 		getExcuse().then((ex) => {
 			setExcuse(ex);
@@ -662,41 +738,52 @@ export const ExcusefromApi = () => {
 	}, []);
 
 	if (excuse) {
-		return <div>{<Card excuse={excuse} />}</div>;
+		return (
+			<div>
+				<Card excuse={excuse} />
+			</div>
+		);
 	}
 	return <p>loading excuse...</p>;
 };
+
+export default ExcusefromApi;
 ```
 
 > Card.tsx
 
 ```tsx
-// (...)
+import React, { useState } from 'react';
 
-export const Card = (props: { ex: string; color?: string }) => {
+const styleObject = (isActive: boolean) => ({
+	// (...)
+});
+
+const Card = (props: { ex: string }) => {
 	const { ex } = props;
 	const image =
 		'https://preview.redd.it/0q9k35rs52461.jpg?width=1920&format=pjpg&auto=webp&s=28a96947814b6207c596c34b4e623bc6c9683692';
 
 	const [isActive, setIsActive] = useState(false);
-	const [myColor, setMyColor] = useState('red');
 
 	const excuseHandler = () => {
-		console.log(`click on excuse ${ex}`);
-		setMyColor('green');
 		setIsActive(!isActive);
 	};
 	return (
-		<div style={styleObject(myColor)}>
-			<img src={image} width="300"></img>
+		<div style={styleObject(isActive)}>
+			<img alt="demo" src={image} width="300" />
 			<p>{ex}</p>
-			<button onClick={excuseHandler}>Select</button>
+			<button type="button" onClick={excuseHandler}>
+				Select
+			</button>
 			<p>status: {isActive ? 'true' : 'false'}</p>
 			{isActive && <p>Excuse already used</p>}
 			{!isActive && <p>excuse available</p>}
 		</div>
 	);
 };
+
+export default Card;
 ```
 
 ## Tips
