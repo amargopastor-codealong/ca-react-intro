@@ -2,19 +2,35 @@
 
 [REACT](https://es.reactTS.org/): creado por Facebook.
 
-`REACT` es una libreria de frontend (o framework de frontend) de pintado por pantalla, similar a DOM manipulation, pero sin necesidad de recargar la pantalla.
+`REACT` es una libreria de frontend (o framework\* de frontend quizás) de pintado por pantalla, similar a DOM manipulation, pero sin necesidad de recargar la pantalla. React se puede ejecutar tanto en el cliente como en el servidor. Además, podemos usar React Native para crear aplicaciones nativas para Android e iOS.
 
 Cuando trabajamos proyectos con interacción entre usuario y aplicación (DOM manipulation) es habitual encontrar funciones tipo `DocumentCreateElements` que genera todos los elementos por pantalla. No obstante, cada cambio implicaba una recarga completa de la pantalla del navegador.
 
-Todo esto lo hará REACT de manera automática mediante `componentes`: entidad visual de nuestra aplicación (ej: una lista, imagen con texto, interface de usuario, etc). React se emplea precisamente para facilitar la `creación de componentes interactivos y reutilizables`.
+Todo esto lo hará REACT de manera automática mediante `componentes`: entidad visual de nuestra aplicación (ej: una lista, imagen con texto, interface de usuario, etc). React se emplea precisamente para facilitar la `creación de componentes interactivos y reutilizables`. Cada uno de estos componentes posee su propio estado. Cuando dicho estado cambia, React lo vuelve a renderizar.
 
 REACT trabaja mediante el `DOM en la sombra`. Se trata de una herramienta que consensua el DOM del navegador y su propio DOM.
 
 > `DOM en la sombra`: Se puede pensar en el Shadow DOM como un DOM dentro del DOM. Si el DOM creaba un árbol DOM global, el Shadow DOM crea un sub-árbol dentro del DOM regular. Y dentro del sub-árbol, los nodos HTML, el CSS y el TS son independientes, siendo esta su principal ventaja, ya que permite la encapsulación de pequeñas partes del documento.
 
+> `Virtual DOM`: React usa un DOM virtual para renderizar los componentes. El DOM virtual es una representación en memoria del DOM real. Cuando el estado de un componente cambia, React vuelve a renderizar la interfaz. En lugar de modificar el DOM real, React modifica el DOM virtual y, a continuación, compara el DOM virtual con el DOM real. De esta forma, React sabe qué cambios se deben aplicar al DOM real.
+
 Podemos usar REACT para pintar en el navegador (`react dom`) y en apps (`react native`). En este aspecto, la forma interna de trabajar de REACT al pintar los componentes sirve tanto para navegador como para móvil.
 
 En resumen: REACT es una librería de frontend que sirve para visualizar y crear componentes interactivos y reutilizables.
+
+## Diferencia entre Shadow DOM y Virtual DOM
+
+El Shadow DOM es una API del navegador que nos permite crear un árbol de nodos DOM independiente dentro de un elemento del DOM. Esto nos permite crear componentes que no interfieran con el resto de la aplicación. Se usa especialmente con Web Components.
+
+El Virtual DOM es una representación del DOM en memoria. Esta representación se crea cada vez que se produce un cambio en el DOM. Esto nos permite comparar el DOM actual con el DOM anterior y así determinar qué cambios se deben realizar en el DOM real. Lo usa React y otras bibliotecas para hacer el mínimo número de cambios en el DOM real.
+
+## React DOM
+
+React DOM es la librería que se encarga de renderizar los componentes de React para el navegador. Hay que tener en cuenta que React es una biblioteca que se puede usar en diferentes entornos (dispositivos móviles, apps de escritorio, terminal...).
+
+Mientras que la biblioteca de React, a secas, es el motor de creación de componentes, hooks, sistema de props y estado... React DOM es la librería que se encarga de renderizar los componentes de React específicamente en el navegador.
+
+React Native, por ejemplo, haría lo mismo, pero para dispositivos móviles.
 
 ## Set-up
 
@@ -129,8 +145,6 @@ export default App;
 
 ## Librería react-dom
 
-<!-- TODO: Ampliar explicación librería react-dom -->
-
 Un `COMPONETE` es un elemento compuesto de HTML y TS (elemento con interactivdad). Es decir, encapsulamos en una misma entidad visual una cierta funcionalidad; por ejemplo, la barra de búsqueda de google es un componente con interactividad.
 
 `Componente RAÍZ`: componente o entidad visual del que colgarán el resto de componente. Aquí montamos toda la aplicación (todos los componentes). Los componentes mantienen una estructura jerárquica.
@@ -138,8 +152,6 @@ Un `COMPONETE` es un elemento compuesto de HTML y TS (elemento con interactivdad
 ## La nueva sintaxis TSX
 
 REACT introduce una nueva sintaxis llamada `TSX (TS + HTML): etiquetas html dentro de TS`. TSX es una ampliación de la sintaxis de TS para soportar etiquetas html en sus documentos. Es una manera más corta para programar en REACT.
-
-<!-- TODO: Ampliar explicación Parcel y compilación -->
 
 Para este proyecto comenzamos a trabajar `Parcel`: una herramienta que lee los archivos y convierte las etiquetas TSX en sintaxis TS real gracias al transpilador (un codigo fuente a otro codigo fuente). Parcel usa este elemento para convertir TSX a TS y, posteriormente, a JS.
 
@@ -203,7 +215,7 @@ const App = () => (
   <img src="./img/img1.png" style="width: 100%">
 </p>
 
-> NOTA: Si a un `div` le queremos poner una etiqueta `class` en REACT empleamos `className`.
+> NOTA: Si a un `div` le queremos poner una etiqueta `class` en REACT empleamos `className`. La razón por la que se llama className es porque class es una palabra reservada en JavaScript. Por eso, en JSX, tenemos que usar className para aplicar clases CSS.
 
 ## REACT DEV TOOLS
 
@@ -315,10 +327,10 @@ const styleObject = {
 };
 
 export const Card = () => {
-	const { title, image } = list['one'];
+	const { title, image } = list.one;
 	return (
 		<div style={styleObject}>
-			<img src={image} width="300"></img>
+			<img alt="demo" src={image} width="300" />
 			<p>{title}</p>
 		</div>
 	);
@@ -327,9 +339,7 @@ export const Card = () => {
 
 ## PROPS
 
-<!-- TODO: Ampliar definición de PROPS -->
-
-Al igual que las etiquetas tienen atributos, los componentes en `REACT tienen PROPS`. De modo que los atributos se convierten en un objeto:
+Al igual que las etiquetas tienen atributos, los componentes en `REACT tienen propiedades o PROPS`. De modo que los atributos se convierten en un objeto (datos) que contiene información y nos permite trabajar, compartir información entre componentes, etc.
 
 > Card.tsx
 
@@ -450,7 +460,9 @@ Es decir, los propios estilos visuales se pueden parametrizar y escribir con poc
 
 En resumen, un componente funcional recibe unas props y devuelve la representación visual de ese componente (que a su vez puede delegar la represnetación visual de otros componentes en los mismos).
 
-## Pintado dinámico
+## Renderizado de listas
+
+El renderizado de listas es la forma de iterar un array de elementos y renderizar elementos de React para cada uno de ellos.
 
 Para REACT cada elemento es único, lo que le permite eliminar SÓLO el componente deseado identificándolo mediante una key. En esencia, esto permite la reconciliación con el DOM.
 
@@ -465,6 +477,7 @@ import Card from './components/Card';
 
 const App = () => {
 	const excusesKeys = Object.keys(list);
+	onsole.log(excusesKeys);
 	return (
 		<div className="cardlist">
 			{excusesKeys.map((ex, i) => (
@@ -513,6 +526,8 @@ export default Card;
 
 ## Hooks
 
+Los Hooks son una API de React que nos permite tener el estado, y otras características de React, de los componentes creados con una function. Hooks es gancho y, precisamente, lo que hacen, es que te permiten enganchar tus componentes funcionales a todas las características que ofrece React.
+
 Vamos a añadir un btn en cada card que ejecute una función `excuseHandler`:
 
 > Card.tsx
@@ -543,11 +558,15 @@ const Card = (props: {
 // (...)
 ```
 
-Vamos a hacer que el color cambie con el hook useState(). Un hook es una función que nos permite alterar el comportamiento de un componente.
+Vamos a hacer que el color cambie con el hook useState(). Un hook es una función que nos permite alterar un componente.
 
-`useState()`: Es un hook que importamos de REACT. Permite hacer que un componente se renderice de nuevo (o dicho de otra manera, es un hook que nos permite tener variables de estado dentro de un componente funcional). Por norma se refiere a un estado visual (que condiciona el pintado visual de un componente).
+`useState()`: Es un hook que importamos de REACT y empleamos para crear variables de estado (valor dinámico) que pueden variar en el tiempo y requieran una re-renderización del componente. Es decir, permite hacer que un componente se renderice de nuevo. Por norma se refiere a un estado visual (que condiciona el pintado visual de un componente).
 
 El hook useState tiene la siguiente forma: siempre recibe un array donde el primer elemento del mismo es el value y el segundo elemento es una función que modifica dicho valor (setValue):
+
+```ts
+const [value, setValue] = useState();
+```
 
 > IMPORTANTE: React solo re-pinta un componente en dos casos:
 >
@@ -604,7 +623,7 @@ export default Card;
 
 ## UseEffect
 
-El `hook useEfect` controla cuando ejecutar el efecto colateral de algo. Posee dependencias que indican cuándo ejecutar el efecto.
+El `hook useEfect` controla cuándo ejecutar el efecto colateral de algo. Posee dependencias que indican cuándo ejecutar el efecto. Se usa para ejecutar código cuando se renderiza el componente o cuando cambian las dependencias del efecto.
 
 Vamos a instalar axios y crear una función que consuma información de una API externa.
 
@@ -630,7 +649,7 @@ export default getExcuse;
 
 ```tsx
 import React from 'react';
-import getExcuse from '../lib/getExcuse';
+import getExcuse from '../../lib/getExcuses';
 
 const ExcusefromApi = () => {
 	const ex = getExcuse();
@@ -785,15 +804,3 @@ const Card = (props: { ex: string }) => {
 
 export default Card;
 ```
-
-## Tips
-
-- Componente funcional porque se usa una función en lugar de una clase.
-- Empleamos className en lugar de la etiqueta class de CSS.
-- En react, los estilos en linea deben ser objetos (no strings).
-- No es correcto margin-top, sino que debe ser marginTop: es una convención de REACT llamada CSS - como objeto.
-- Los compoentes en REACT tienen props (igual que las etiqueta tienen propiedades).
-- REACT nos permite retilizar componentes (ventaja de REACT).
-- Podemos pasar como prop string, objetos e incluso funciones.
-- `useState() y useEffect()`: son hooks que ya existen en REACT. Un hook es una función que nos permite alterar el comportamiento de un componente.
-- REACT sólo vuelve a pintar un componente si se da uno de los dos sigueintes casos: si cambia una prop o si cambia un estado (useState)
