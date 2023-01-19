@@ -2,7 +2,9 @@
 
 [REACT](https://es.reactTS.org/): creado por Facebook.
 
-`REACT` es una libreria de frontend (o framework\* de frontend quizás) de pintado por pantalla, similar a DOM manipulation, pero sin necesidad de recargar la pantalla. React se puede ejecutar tanto en el cliente como en el servidor. Además, podemos usar React Native para crear aplicaciones nativas para Android e iOS.
+`REACT` es una libreria de JS frontend (o framework\* de frontend quizás) de pintado por pantalla, similar a DOM manipulation, pero sin necesidad de recargar la pantalla. React se puede ejecutar tanto en el cliente como en el servidor. Además, podemos usar React Native para crear aplicaciones nativas para Android e iOS.
+
+Conoceremos REACT en esta primera aproximación como una herramienta ideal para construir Single Page Aplications, las cuales irán transformando su contenido sin necesidad de refrescar la propia página.
 
 Cuando trabajamos proyectos con interacción entre usuario y aplicación (DOM manipulation) es habitual encontrar funciones tipo `DocumentCreateElements` que genera todos los elementos por pantalla. No obstante, cada cambio implicaba una recarga completa de la pantalla del navegador.
 
@@ -145,7 +147,7 @@ export default App;
 
 ## Librería react-dom
 
-Un `COMPONETE` es un elemento compuesto de HTML y TS (elemento con interactivdad). Es decir, encapsulamos en una misma entidad visual una cierta funcionalidad; por ejemplo, la barra de búsqueda de google es un componente con interactividad.
+Un `COMPONETE` es un elemento compuesto de HTML y TS (elemento con interactivdad). Es decir, encapsulamos en una misma entidad visual una cierta funcionalidad; por ejemplo, la barra de búsqueda de google es un componente con interactividad. De manera práctica un componente no es más que una función que devuelve un html.
 
 `Componente RAÍZ`: componente o entidad visual del que colgarán el resto de componente. Aquí montamos toda la aplicación (todos los componentes). Los componentes mantienen una estructura jerárquica.
 
@@ -526,7 +528,7 @@ export default Card;
 
 ## Hooks
 
-Los Hooks son una API de React que nos permite tener el estado, y otras características de React, de los componentes creados con una function. Hooks es gancho y, precisamente, lo que hacen, es que te permiten enganchar tus componentes funcionales a todas las características que ofrece React.
+Los Hooks son una API de React que nos permite tener el estado y otras características de React de los componentes creados con una function. Hooks es gancho y, precisamente, lo que hacen, es que te permiten enganchar tus componentes funcionales a todas las características que ofrece React.
 
 Vamos a añadir un btn en cada card que ejecute una función `excuseHandler`:
 
@@ -623,7 +625,11 @@ export default Card;
 
 ## UseEffect
 
-El `hook useEfect` controla cuándo ejecutar el efecto colateral de algo. Posee dependencias que indican cuándo ejecutar el efecto. Se usa para ejecutar código cuando se renderiza el componente o cuando cambian las dependencias del efecto.
+El `hook useEfect` controla cuándo ejecutar el efecto colateral de algo. Posee dependencias que indican cuándo ejecutar el efecto. Se usa para ejecutar código cuando se renderiza el componente o cuando cambian las dependencias del efecto. Algunos ejemplos de uso pueden ser:
+
+- Fetch
+- Manipulación del DOM
+- Timer functions
 
 Vamos a instalar axios y crear una función que consuma información de una API externa.
 
@@ -704,6 +710,27 @@ Estamos viendo como esta función devuelve una promesa y de que manera REACT no 
 
 `HOOK useEfect`: controla cuándo ejecutar el efecto colateral de algo gracias a sus dependencias.
 
+useEffect se compone de:
+
+- Una `función callback` que contiene la lógica efecto-colateral y se ejecutará justo después de que los cambios se ejecuten contra el DOM.
+- Un `array opcional de dependencias` que ejecutará el callback sólo si estas cambian entre renderizados.
+
+```ts
+useEffect(callback[, dependencies]);
+```
+
+> Ponemos nuestra lógica de efecto colateral en la función callback, y empleamos las dependencias para controlar cuando queremos que el efecto colateral se ejecute.
+
+<p align="center">
+  <img src="./img/img2.png" style="width: 100%">
+</p>
+
+Sobre las dependencias del useEffect() es importante señalar los 3 siguientes casos:
+
+- `No indicadas`: el efecto colateral se ejecuta trás cada renderizado
+- `Array vacío []`: el efecto colateral se ejecuta sólo una vez tras el renderizado incial
+- `Tiene props o valores de estado`: el efecto colateral se ejecuta sólo cuando el valor de alguna de las dependencias cambia.
+
 > App.tsx
 
 ```tsx
@@ -742,11 +769,9 @@ import React, { useState, useEffect } from 'react';
 import getExcuse from '../lib/getExcuse';
 import Card from '../components/Card';
 
-// Cuando se monte el componente en el DOM por primera vez llama a esta función.
-// [] -> dependencias: indian cuando ejecutar un efecto
-// En este caso, al estar vacío el array de dependencias,
-// este efecto se ejecuta solo cuando el componente
-// se monta por primera vez en el DOM
+/*Cuando se monte el componente en el DOM por primera vez llama a esta función.
+[] -> dependencias: indian cuando ejecutar un efecto
+En este caso, al estar vacío el array de dependencias este efecto se ejecuta solo cuando el componente se monta por primera vez en el DOM*/
 
 const ExcusefromApi = () => {
 	const [excuse, setExcuse] = useState();
