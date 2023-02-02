@@ -4,17 +4,19 @@
 
 `REACT` es una libreria de JS frontend (o framework\* de frontend quizás) de pintado por pantalla, similar a DOM manipulation, pero sin necesidad de recargar la pantalla. React se puede ejecutar tanto en el cliente como en el servidor. Además, podemos usar React Native para crear aplicaciones nativas para Android e iOS.
 
-Conoceremos REACT en esta primera aproximación como una herramienta ideal para construir Single Page Aplications, las cuales irán transformando su contenido sin necesidad de refrescar la propia página.
+Conoceremos REACT en esta primera aproximación como una herramienta ideal para construir `Single Page Aplications`, las cuales irán transformando su contenido sin necesidad de refrescar la propia página.
 
-Cuando trabajamos proyectos con interacción entre usuario y aplicación (DOM manipulation) es habitual encontrar funciones tipo `DocumentCreateElements` que genera todos los elementos por pantalla. No obstante, cada cambio implicaba una recarga completa de la pantalla del navegador.
+<!-- Cuando trabajamos proyectos con interacción entre usuario y aplicación (DOM manipulation) es habitual encontrar funciones tipo `DocumentCreateElements` que genera todos los elementos por pantalla. No obstante, cada cambio implicaba una recarga completa de la pantalla del navegador. -->
 
 Todo esto lo hará REACT de manera automática mediante `componentes`: entidad visual de nuestra aplicación (ej: una lista, imagen con texto, interface de usuario, etc). React se emplea precisamente para facilitar la `creación de componentes interactivos y reutilizables`. Cada uno de estos componentes posee su propio estado. Cuando dicho estado cambia, React lo vuelve a renderizar.
 
 REACT trabaja mediante el `DOM en la sombra`. Se trata de una herramienta que consensua el DOM del navegador y su propio DOM.
 
-> `DOM en la sombra`: Se puede pensar en el Shadow DOM como un DOM dentro del DOM. Si el DOM creaba un árbol DOM global, el Shadow DOM crea un sub-árbol dentro del DOM regular. Y dentro del sub-árbol, los nodos HTML, el CSS y el TS son independientes, siendo esta su principal ventaja, ya que permite la encapsulación de pequeñas partes del documento.
+<!-- > `DOM en la sombra`: Se puede pensar en el Shadow DOM como un DOM dentro del DOM. Si el DOM creaba un árbol DOM global, el Shadow DOM crea un sub-árbol dentro del DOM regular. Y dentro del sub-árbol, los nodos HTML, el CSS y el TS son independientes, siendo esta su principal ventaja, ya que permite la encapsulación de pequeñas partes del documento.
 
-> `Virtual DOM`: React usa un DOM virtual para renderizar los componentes. El DOM virtual es una representación en memoria del DOM real. Cuando el estado de un componente cambia, React vuelve a renderizar la interfaz. En lugar de modificar el DOM real, React modifica el DOM virtual y, a continuación, compara el DOM virtual con el DOM real. De esta forma, React sabe qué cambios se deben aplicar al DOM real.
+> `Shadow DOM`: es una API del navegador que nos permite crear un árbol de nodos DOM independiente dentro de un elemento del DOM. Esto nos permite crear componentes que no interfieran con el resto de la aplicación. Se usa especialmente con Web Components.
+
+> `Virtual DOM`: React usa un DOM virtual para renderizar los componentes. El DOM virtual es una representación en memoria del DOM real. Cuando el estado de un componente cambia, React vuelve a renderizar la interfaz. En lugar de modificar el DOM real, React modifica el DOM virtual y, a continuación, compara el DOM virtual con el DOM real. De esta forma, React sabe qué cambios se deben aplicar al DOM real. -->
 
 Podemos usar REACT para pintar en el navegador (`react dom`) y en apps (`react native`). En este aspecto, la forma interna de trabajar de REACT al pintar los componentes sirve tanto para navegador como para móvil.
 
@@ -28,7 +30,7 @@ El Virtual DOM es una representación del DOM en memoria. Esta representación s
 
 ## React DOM
 
-React DOM es la librería que se encarga de renderizar los componentes de React para el navegador. Hay que tener en cuenta que React es una biblioteca que se puede usar en diferentes entornos (dispositivos móviles, apps de escritorio, terminal...).
+React DOM es la `librería que se encarga de renderizar los componentes de React para el navegador`. Hay que tener en cuenta que React es una biblioteca que se puede usar en diferentes entornos (dispositivos móviles, apps de escritorio, terminal...).
 
 Mientras que la biblioteca de React, a secas, es el motor de creación de componentes, hooks, sistema de props y estado... React DOM es la librería que se encarga de renderizar los componentes de React específicamente en el navegador.
 
@@ -118,6 +120,17 @@ touch App.tsx index.tsx
 </html>
 ```
 
+> App.tsx
+
+```tsx
+import React from 'react';
+
+// Nota: Esto es un componente "funcional". Se le llama funcional porque se usa una función en lugar de una clase
+const App = () => <p>Hola desde REACT</p>;
+
+export default App;
+```
+
 > index.tsx
 
 ```tsx
@@ -132,17 +145,6 @@ const root = createRoot(appRoot);
 
 // Renderiza App (que es un componente) dentro del elemento appRoot. App es el COMPONENTE RAÍZ.
 root.render(<App />);
-```
-
-> App.tsx
-
-```tsx
-import React from 'react';
-
-// Nota: Esto es un componente "funcional". Se le llama funcional porque se usa una función en lugar de una clase
-const App = () => <p>Hola desde REACT</p>;
-
-export default App;
 ```
 
 ## Librería react-dom
@@ -479,7 +481,7 @@ import Card from './components/Card';
 
 const App = () => {
 	const excusesKeys = Object.keys(list);
-	onsole.log(excusesKeys);
+	console.log(excusesKeys);
 	return (
 		<div className="cardlist">
 			{excusesKeys.map((ex, i) => (
@@ -766,7 +768,7 @@ export default getExcuse;
 
 ```tsx
 import React, { useState, useEffect } from 'react';
-import getExcuse from '../lib/getExcuse';
+import getExcuse from '../../lib/getExcuses';
 import Card from '../components/Card';
 
 /*Cuando se monte el componente en el DOM por primera vez llama a esta función.
@@ -775,6 +777,7 @@ En este caso, al estar vacío el array de dependencias este efecto se ejecuta so
 
 const ExcusefromApi = () => {
 	const [excuse, setExcuse] = useState();
+
 	useEffect(() => {
 		getExcuse().then((ex) => {
 			setExcuse(ex);
@@ -803,8 +806,8 @@ const styleObject = (isActive: boolean) => ({
 	// (...)
 });
 
-const Card = (props: { ex: string }) => {
-	const { ex } = props;
+const Card = (props: { excuse: string }) => {
+	const { excuse } = props;
 	const image =
 		'https://preview.redd.it/0q9k35rs52461.jpg?width=1920&format=pjpg&auto=webp&s=28a96947814b6207c596c34b4e623bc6c9683692';
 
@@ -816,7 +819,7 @@ const Card = (props: { ex: string }) => {
 	return (
 		<div style={styleObject(isActive)}>
 			<img alt="demo" src={image} width="300" />
-			<p>{ex}</p>
+			<p>{excuse}</p>
 			<button type="button" onClick={excuseHandler}>
 				Select
 			</button>
